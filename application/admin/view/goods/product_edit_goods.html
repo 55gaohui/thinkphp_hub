@@ -1,0 +1,374 @@
+<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="Bookmark" href="/favicon.ico" >
+<link rel="Shortcut Icon" href="/favicon.ico" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="/static/admin/lib/html5shiv.js"></script>
+<script type="text/javascript" src="/static/admin/lib/respond.min.js"></script>
+
+<![endif]-->
+
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/lib/Hui-iconfont/1.0.8/iconfont.css" />
+
+<link rel="stylesheet" type="text/css" href="/static/admin/lib/bootstrap-table/css/bootstrap.min.css" />
+<link href="/static/admin/lib/bootstrapFileinput/css/fileinput.css" media="all" rel="stylesheet" type="text/css"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" media="all" rel="stylesheet" type="text/css"/>
+<link href="/static/admin/lib/bootstrapFileinput/themes/explorer-fa/theme.css" media="all" rel="stylesheet" type="text/css"/>
+
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui.admin/css/style.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="/static/admin/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--/meta 作为公共模版分离出去-->
+
+<link href="/static/admin/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="page-container">
+	<form action="{:url('product_edit_goods_new')}" method="post" class="form form-horizontal" id="form-article-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>商品名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$goods.goodsname}" placeholder="" id="" name="goodsname">
+				<input type="hidden" name="id" value="{$goods.id}">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">商品分类：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span class="select-box">
+					<select class="select" size="1" name="tid">
+						{foreach name="data" id="v"}
+							<option value="{$v.id},{$v.pid}" {eq name="$goods.tid" value="$v.id"}selected{/eq}>{php}echo str_repeat('&nbsp;',$v['level']*4){/php}|-{$v['name']}</option>
+						{/foreach}
+					</select>
+				</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">商品单位：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$goods.goodsname}" placeholder="" id="" name="unit">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">商品属性：</label>
+			<div class="formControls col-xs-8 col-sm-9 skin-minimal">
+				<div class="check-box">
+					<input type="radio" id="attributes-1"  name="attributes" value="1" {if condition="($goods.attributes == 1)"}checked {/if}>
+					<label for="attributes-1">1、推荐</label>
+				</div>
+				<div class="check-box">
+					<input type="radio" id="attributes-2"  name="attributes" value="2"{if condition="($goods.attributes == 2)"}checked{/if}>
+					<label for="attributes-2">2、新上</label>
+				</div>
+				<div class="check-box">
+					<input type="radio" id="attributes-3"  name="attributes" value="3"{if condition="($goods.attributes == 3)"}checked{/if}>
+					<label for="attributes-3">3、热卖</label>
+				</div>
+				<div class="check-box">
+					<input type="radio" id="attributes-4"  name="attributes" value="4"{if condition="($goods.attributes == 4)"}checked{/if}>
+					<label for="attributes-4">4、促销</label>
+				</div>
+				<div class="check-box">
+					<input type="radio" id="attributes-5"  name="attributes" value="5"{if condition="($goods.attributes == 5)"}checked{/if}>
+					<label for="attributes-5">5、包邮</label>
+				</div>
+				<div class="check-box">
+					<input type="radio" id="attributes-6"  name="attributes" value="6"{if condition="($goods.attributes == 6)"}checked{/if}>
+					<label for="attributes-6">6、限时卖</label>
+				</div>
+				<div class="check-box">
+					<input type="radio" id="attributes-7"  name="attributes" value="7"{if condition="($goods.attributes == 7)"}checked{/if}>
+					<label for="attributes-7">7、不参与会员折扣</label>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">商品编号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="number" id="" placeholder="" value="{$goods.number}" class="input-text" style=" width:25%">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">条形码：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="barcode" id="" placeholder="" value="{$goods.barcode}" class="input-text">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">现价：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="curprice" id="" placeholder="" value="{$goods.curprice}" class="input-text">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">市场价：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="oriprice" id="" placeholder="" value="{$goods.oriprice}" class="input-text">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">成本价：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="cosprice" id="" placeholder="" value="{$goods.cosprice}" class="input-text">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">库存量：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="inventory" id="" placeholder="" value="{$goods.inventory}" class="input-text">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">限制购买量：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="paylimit" id="" placeholder="" value="{$goods.paylimit}" class="input-text">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">已经购买量：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="already" id="" placeholder="" value="{$goods.already}" class="input-text">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">运费：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="freight" id="" placeholder="" value="{$goods.freight}" class="input-text">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">是否上架：</label>
+			<div class="formControls col-xs-8 col-sm-9 skin-minimal">
+				<div class="check-box">
+					<input type="radio" id="status-1"  name="status" value="1" {if condition="($goods.status == 1)"}checked{/if}>
+					<label for="status-1">上架</label>
+				</div>
+				<div class="check-box">
+					<input type="radio" id="status-2"  name="status" value="0"{if condition="($goods.status == 0)"}checked{/if}>
+					<label for="status-2">下架</label>
+				</div>
+
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">商品排序：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="reorder" id="" placeholder="" value="{$goods.reorder}" class="input-text">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">轮播上传：</label>
+			<div class=" col-xs-8 col-sm-9" id="formimageshow">
+				<button id="btnshow" type="button" class="btn btn-success" onclick="uploadfileshow(); return false;">上传轮播图</button>
+				<br>
+				<label>最多支持4张轮播图：</label>
+				{foreach $image as $v}
+					{if condition="$v neq ''"}
+						<div class="input-group " id="imageDelete{$v['id']}" style="margin-top:.5em;margin-right:2em; float:left; display: inline-block; width: auto;"><input type="hidden" name="imagepath[]" class="imagepath" value="{$v['id']}"/><img src="{$v['filepath']}"; class="img-responsive img-thumbnail" width="150" ><a class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage('{$v['id']}')">×</a></div>
+					{/if}
+				{/foreach}
+				<!--<div class="uploader-list-container" id="imgUpload" style="display: none; width: 800px; height:auto; position: fixed; top: 20%;left: 50%; z-index: 1000; margin-left: -400px;">-->
+					<!--<input type="hidden" class="imgfirst" name="imgfirst" value="{$goods.imagepath}">-->
+					<!--<div class="queueList">-->
+						<!--<div id="dndArea" class="placeholder">-->
+							<!--<div id="filePicker-2"></div>-->
+							<!--<p>或将照片拖到这里，最多可选4张</p>-->
+						<!--</div>-->
+					<!--</div>-->
+					<!--<div class="statusBar" style="display:none;">-->
+						<!--<div class="progress"> <span class="text">0%</span> <span class="percentage"></span> </div>-->
+						<!--<div class="info"></div>-->
+						<!--<div class="btns">-->
+							<!--<div id="filePicker2"></div>-->
+							<!--<div class="uploadBtn">开始上传</div>-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</div>-->
+
+				<!--<form enctype="multipart/form-data">-->
+				<!--<div class="form-group" id="modal-webuploader" style="display: none; width: 800px; height:auto; position: fixed; top: 20%;left: 50%; z-index: 1000; margin-left: -400px; background: #fff; padding: 20px 40px; border: 1px solid #eee;">-->
+					<!--<div class="file-loading">-->
+						<!--<input id="file-1" type="file" multiple class="file" data-overwrite-initial="false" data-min-file-count="2">-->
+					<!--</div>-->
+				<!--</div>-->
+				<!--</form>-->
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">详细内容：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<script id="editor" type="text/plain" style="min-height: 500px;">{$goods.text}</script>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<input class="btn btn-primary radius" type="submit" value="修改商品" />
+			</div>
+		</div>
+        <!-- 图片上传 -->
+        <div id="modal-webuploader" class="modal fade in" tabindex="-1" role="dialog" aria-hidden="false" style="display: none; margin-top: 100px;">
+
+
+            <div class="modal-dialog" style="max-width: 1000px; width: 1000px;  ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button"  id="close" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <ul class="nav nav-pills" role="tablist">
+                            <li id="li_upload" class="active" role="presentation"><a href="#upload" aria-controls="upload" role="tab" data-toggle="tab" onclick="$('#select').hide();" >上传图片</a></li>
+                        <!-- <li id="li_network" class="" role="presentation"><a href="#network" aria-controls="network" role="tab" data-toggle="tab" onclick="$('#select').hide();">提取网络图片</a></li> -->
+
+                        </ul>
+                    </div>
+                    <div class="modal-body tab-content">
+                        <div role="tabpanel" class="tab-pane network" id="network">
+                        </div>
+                        <div role="tabpanel" class="tab-pane upload active" id="upload">
+                            <div id="uploader" class="uploader">
+                                <form enctype="multipart/form-data" method="post">
+                                    <input id="file-1" class="file" name="files[]" type="file" multiple data-min-file-count="1">
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- 图片上传 -->
+	</form>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/static/admin/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/admin/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/static/admin/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/static/admin/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/admin/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/admin/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/admin/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/static/admin/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/static/admin/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="/static/admin/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="/static/admin/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="/static/admin/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<!--bootstropFileinput-->
+<script src="/static/admin/lib/bootstrapFileinput/js/plugins/sortable.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/js/fileinput.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/js/locales/fr.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/js/locales/es.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/js/locales/zh.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/themes/explorer-fa/theme.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/themes/fa/theme.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrap-table/js/bootstrap.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+    function uploadfileshow() {
+        $('#modal-webuploader').fadeIn();
+    }
+    $("#close").click(function(){
+        $("#modal-webuploader").fadeOut('slow');
+    })
+    //图片上传
+    initFileInput("file-1", "{:url('product_add_images')}","{$goods.id}");
+    //初始化fileinput控件（第一次初始化）
+    function initFileInput(ctrlName, uploadUrl,goodsId) {
+        var control = $('#' + ctrlName);
+        control.fileinput({
+            language: 'zh', //设置语言
+			theme: 'fa',
+            uploadUrl: uploadUrl, // you must set a valid URL here else you will get an error
+            allowedFileExtensions: ['jpg', 'png', 'gif'],
+			overwriteInitial: false,
+            //uploadAsync: true, //是否允许异步上传
+            maxFileSize: 1000,
+            maxFilesNum: 4,
+            enctype: 'multipart/form-data',
+            //allowedFileTypes: ['image', 'video', 'flash'],
+            initialPreviewConfig: {
+                caption: ctrlName,
+                width: '120px',
+                url: uploadUrl,
+                key: 101,
+                success: function () {
+
+                }
+            },
+            uploadExtraData:function (previewId, index) {
+                //向后台传递id作为额外参数，是后台可以根据id修改对应的图片地址。
+                var obj = {};
+                obj.goods_id = goodsId;
+                return obj;
+            },
+            slugCallback: function (filename) {
+                return filename.replace('(', '_').replace(']', '_');
+            },
+
+        }).on('fileuploaded', function(event, data, previewId, index) {
+              var response = eval('(' + data.response + ')');
+            var div=$('<div class="input-group " id="imageDelete'+response.id+'" style="margin-top:.5em;margin-right:2em; float:left; display: inline-block; width: auto;"><input type="hidden" name="imagepath[]" class="imagepath" value="'+response.id+'"/><img src="'+response.imagepath+'"; class="img-responsive img-thumbnail" style="width: 150px;"><a class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage('+response.id+')">×</a></div>');
+            $('#formimageshow').append(div);
+            var imagepath=$('input[class=imagepath]');
+            console.log(imagepath);
+            if(imagepath.length <= 4){
+                console.log("in 1");
+                if(imagepath.length == 4){
+                    console.log("in disabled");
+                    $('#btnshow').attr("disabled","disabled");//禁用上传按钮
+				}
+                // $("#modal-webuploader").fadeIn();//关闭上传
+                $("#modal-webuploader").fadeOut('slow');
+            }else if(imagepath.length > 4){
+                alert('最多只能上传4张图片！');
+            }
+        }).on('fileerror', function(event, data, msg) {  //一个文件上传失败
+            console.log('文件上传失败！'+msg);
+        });
+    };
+    function deleteImage(id){
+        $.ajax({
+            url:'{:url("Goods/product_del_images")}',
+            type:'get',
+            data:{id:id},
+            dataType:'json',
+            success:function(data){
+                if(data==1){
+                     $('#imageDelete'+id).remove();
+                    var imagepath=$('input[class=imagepath]');
+                    if(imagepath.length<4){
+
+                        $('#btnshow').removeAttr("disabled");
+                    }else{
+
+                    }
+                }else{
+                    alert('删除失败');
+                }
+            }
+
+        })
+
+    }
+
+$(function(){
+	var ue = UE.getEditor('editor');
+});
+</script>
+</body>
+</html>

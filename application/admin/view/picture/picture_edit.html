@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="/static/admin/lib/html5shiv.js"></script>
+<script type="text/javascript" src="/static/admin/lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui.admin/css/style.css" />
+<!--bootstrap fileinput-->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" media="all" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" type="text/css" href="/static/admin/lib/bootstrap-table/css/bootstrap.min.css" />
+<link href="/static/admin/lib/bootstrapFileinput/css/fileinput.css" media="all" rel="stylesheet" type="text/css"/>
+<link href="/static/admin/lib/bootstrapFileinput/themes/explorer-fa/theme.css" media="all" rel="stylesheet" type="text/css"/>
+<!--[if IE 6]>
+<script type="text/javascript" src="/static/admin/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>新增图片</title>
+<link href="/static/admin/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="page-container">
+	<form action="{:url('picture_edit_image')}" method="post" class="form form-horizontal" id="form-article-add">
+        <input type="hidden" name="id" value="{$data.id}">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>图片标题：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.details}" placeholder="" id="" name="details">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">分类栏目：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span class="select-box">
+				<select name="type" class="select">
+                    {if condition="($data.type == 'banner')"}
+                    <option value="banner">轮播图</option>
+                    {else/}
+                    <option value="product">产品页banner</option>
+                    {/if}
+				</select>
+				</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">排序值：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.sort}" placeholder="" id="" name="sort">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">是否显示：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span class="select-box">
+				<select name="status" class="select">
+					<option value="1" {if condition="($data.status == 1)"}selected{/if}>显示</option>
+					<option value="0" {if condition="($data.status == 0)"}selected{/if}>隐藏</option>
+				</select>
+				</span>
+			</div>
+		</div>
+		<div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">轮播上传：</label>
+            <div class=" col-xs-8 col-sm-9" id="formimageshow">
+                <button id="btnshow" type="button" class="btn btn-success" onclick="uploadfileshow(); return false;" {if condition="$data.imagepath neq ''"}disabled{/if}>上传轮播图</button>
+                <br>
+                <label>最多支持1张轮播图：</label>
+                {if condition = "$data.imagepath neq ''"}
+                <div>
+                    <input type="text" name="imagepath[]" style="display: block; width: 500px; background: #e2e2e2" class="imagepath imagepath{$data.id}" value="{$data.imagepath}"  disabled / >
+                    <div class="input-group " id="imageDelete" style="margin-top:.5em;margin-right:2em;display: inline-block; width: auto;"><img src="{$data.imagepath}"; class="img-responsive img-thumbnail" width="150" ><a class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage({$data.id})">×</a></div>
+                </div>  
+                {/if}
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i>提交</button>
+				<button onClick="layer_close();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+			</div>
+		</div>
+		<!-- 图片上传 -->
+        <div id="modal-webuploader" class="modal fade in" tabindex="-1" role="dialog" aria-hidden="false" style="display: none; margin-top: 100px;">
+            <div class="modal-dialog" style="max-width: 1000px; width: 1000px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button"  id="close" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <ul class="nav nav-pills" role="tablist">
+                            <li id="li_upload" class="active" role="presentation"><a href="#upload" aria-controls="upload" role="tab" data-toggle="tab" onclick="$('#select').hide();" >上传图片</a></li>
+                            <!-- <li id="li_network" class="" role="presentation"><a href="#network" aria-controls="network" role="tab" data-toggle="tab" onclick="$('#select').hide();">提取网络图片</a></li> -->
+                        </ul>
+                    </div>
+                    <div class="modal-body tab-content">
+                        <div role="tabpanel" class="tab-pane network" id="network">
+                        </div>
+                        <div role="tabpanel" class="tab-pane upload active" id="upload">
+                            <div id="uploader" class="uploader">
+                                <form enctype="multipart/form-data" method="post">
+                                    <input id="file-1" class="file" name="files[]" type="file" multiple data-min-file-count="2">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</form>
+</div>
+
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/static/admin/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/admin/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/static/admin/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/static/admin/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer /作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/admin/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/admin/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/static/admin/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/static/admin/lib/My97DatePicker/4.8/wdatePicker.js"></script>
+<script type="text/javascript" src="/static/admin/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<!--bootstropFileinput-->
+<script src="/static/admin/lib/bootstrapFileinput/js/plugins/sortable.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/js/fileinput.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/js/locales/fr.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/js/locales/es.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/js/locales/zh.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/themes/explorer-fa/theme.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrapFileinput/themes/fa/theme.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" type="text/javascript"></script>
+<script src="/static/admin/lib/bootstrap-table/js/bootstrap.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+
+function uploadfileshow() {
+    $('#modal-webuploader').fadeIn();
+}
+
+$("#close").click(function () {
+    $("#modal-webuploader").fadeOut('slow');
+})
+//图片上传
+initFileInput("file-1", "{:url('picture_add_images')}");
+
+//初始化fileinput控件（第一次初始化）
+function initFileInput(ctrlName, uploadUrl) {
+    var control = $('#' + ctrlName);
+    control.fileinput({
+        language: 'zh', //设置语言
+        theme: 'fa',
+        uploadUrl: uploadUrl, // you must set a valid URL here else you will get an error
+        allowedFileExtensions: ['jpg', 'png', 'gif'],
+        overwriteInitial: false,
+        //uploadAsync: true, //是否允许异步上传
+        maxFileSize: 1000,
+        maxFilesNum: 1,
+        showUpload:false,//是否显示上传按钮
+        showPreview:true,//是否显示预览
+        dropZoneEnable:false,//是否显示拖拽区域
+        enctype: 'multipart/form-data',
+        //allowedFileTypes: ['image', 'video', 'flash'],
+        initialPreviewConfig: {
+            caption: ctrlName,
+            width: '120px',
+            url: uploadUrl,
+            key: 101,
+            success: function () {
+
+            }
+        },
+        slugCallback: function (filename) {
+            return filename.replace('(', '_').replace(']', '_');
+        },
+
+    }).on('fileuploaded', function (event, data, previewId, index) {
+        var response = eval('(' + data.response + ')');
+        var div = $('<div class="input-group " id="imageDelete" style="margin-top:.5em;margin-right:2em; float:left; display: inline-block; width: auto;"><input type="hidden" name="imagepath[]" class="imagepath" value="' + response.imagepath + '"/><img src="' + response.imagepath + '"; class="img-responsive img-thumbnail" style="width: 150px;"><a class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage()">×</a></div>');
+        $('#formimageshow').append(div);
+        var imagepath = $('input[class=imagepath]');
+        if (imagepath.length >= 1) {
+
+            $('#btnshow').attr("disabled", "disabled");//禁用上传按钮
+            // $("#modal-webuploader").fadeIn();//关闭上传
+            $("#modal-webuploader").fadeOut('slow');
+        }
+    }).on('fileerror', function (event, data, msg) {  //一个文件上传失败
+        console.log('文件上传失败！' + msg);
+    });
+};
+
+//删除图片
+function deleteImage(id) {
+    $('.imagepath'+id).remove();
+    $('#imageDelete').remove();
+    var imagepath = $('input[class=imagepath]');
+    if (imagepath.length < 1) {
+        $('#btnshow').removeAttr("disabled");
+    } else {
+
+    }
+}
+
+</script>
+</body>
+</html>

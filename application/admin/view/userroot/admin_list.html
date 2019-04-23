@@ -1,0 +1,290 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="Bookmark" href="/favicon.ico" >
+<link rel="Shortcut Icon" href="/favicon.ico" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="/static/admin/lib/html5shiv.js"></script>
+<script type="text/javascript" src="/static/admin/lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/static/admin/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/lib/bootstrap-table/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/lib/bootstrap-table/css/bootstrap-table.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="/static/admin/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>管理员列表</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 管理员管理 <span class="c-gray en">&gt;</span> 管理员列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="text-c"> 日期范围：
+		<input type="text" onfocus="{literal}WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}' }){/literal}" id="datemin" class="input-text Wdate" style="width:120px;">
+		-
+		<input type="text" onfocus="{literal}WdatePicker({ minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d' }){/literal}" id="datemax" class="input-text Wdate" style="width:120px;">
+		<input type="text" class="input-text" style="width:250px" placeholder="输入管理员名称" id="search_text" name="">
+		<button type="submit" onclick="search_btn();" class="btn btn-success" id="" name=""><i class="Hui-iconfont">&#xe665;</i> 搜用户</button>
+	</div>
+	<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a href="javascript:;" onclick="admin_add('添加管理员','admin_add.html','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加管理员</a></span></div>
+	<table id="table"></table>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/static/admin/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/admin/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/static/admin/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/static/admin/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+
+<script type="text/javascript" src="/static/admin/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/admin/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="/static/admin/lib/My97DatePicker/4.8/wdatePicker.js"></script>
+<script type="text/javascript" src="/static/admin/lib/bootstrap-table/js/bootstrap-table.js"></script>
+<script type="text/javascript" src="/static/admin/lib/bootstrap-table/js/bootstrap-table-zh-CN.js"></script>
+<script type="text/javascript" src="/static/admin/lib/bootstrap-table/js/bootstrap-table-export.js"></script>
+<script type="text/javascript">
+    InitMainTable ();
+    var $table;
+    //初始化bootstrap-table的内容
+    function InitMainTable () {
+        var queryUrl = "{:url('Userroot/admin_list_ajax')}";
+        $table =$('#table').bootstrapTable({
+			url:queryUrl,
+			method: 'post',
+			toolbar: '#toolbar',                //工具按钮用哪个容器
+			striped: true,                      //是否显示行间隔色
+			cache: true,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+			pagination: true,                   //是否显示分页（*）
+			sortable: true,                     //是否启用排序
+			sortOrder: "asc",                   //排序方式
+            queryParamsType:'',//查询参数组织方式
+			queryParams: queryParams,			//传递参数（*）
+            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+            strictSearch:true,
+			pageNumber: 1,                       //初始化加载第一页，默认第一页
+			pageSize: 3,                       //每页的记录行数（*）
+			pageList: [3, 5, 10, 20],        //可供选择的每页的行数（*）
+			clickToSelect:true,
+			showSearchButton:true,				//显示搜索按钮
+			showRefresh:true,					//是否显示刷新按钮
+            showColumns:true,					//是否显示所有列（显示的列）
+			showExport: true,                     //是否显示导出
+			exportDataType: "basic",              //basic', 'all', 'selected'.
+			columns:[{
+				checkbox:true,
+			},{
+				field:'id',
+				title:'ID',
+				class:'admin_id',
+                sortable: true,			//启用排序
+			}, {
+				field:'admin_name',
+				title:'登录名',
+                sortable: true,			//启用排序
+			}, {
+				field:'phone',
+				title:'手机',
+                sortable: true,			//启用排序
+			}, {
+				field:'email',
+				title:'邮箱',
+                sortable: true,			//启用排序
+			}, {
+				field:'title',
+				title:'角色',
+                sortable: true,			//启用排序
+			}, {
+				field:'create_date',
+				title:'加入时间',
+                sortable: true,			//启用排序
+			}, {
+				field:'state',
+				title:'是否启用',
+				class:'td-status',
+                sortable: true,			//启用排序
+				formatter:function (value,row,index) {
+					var stateZ;
+					if(row.state == 0){
+						stateZ = '<span class="label label-default radius">已禁用</span>';
+					}else{
+						stateZ = '<span class="label label-success radius">已启用</span>';
+					}
+					return stateZ;
+				}
+			}, {
+				field:'',
+				title:'操作',
+				class:'td-manage',
+				formatter: function (value, row, index) {
+					var a_title,a_icon;
+					if(row.state == 0){
+						a_title = '启用';
+						a_icon = '&#xe615;';
+					}else {
+						a_title= '禁用';
+						a_icon = '&#xe631;';
+					}
+					return '<a style="text-decoration:none" onClick="admin_state(this,'+row.id+','+row.state+')" href="javascript:;" title="'+a_title+'"><i class="Hui-iconfont">'+a_icon+'</i></a> <a title="编辑" href="javascript:;" onclick="admin_edit(\'管理员编辑\',\'admin_edit.html?id='+row.id+'\',\''+row.admin_name+'\',\'800\',\'500\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_del(this,'+row.id+')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>';
+				}
+			}],
+            onLoadSuccess: function () {
+            },
+            onLoadError: function () {
+                console.log("数据加载失败！");
+            },
+            onDblClickRow: function (row, $element) {
+                var id = row.ID;
+                EditViewById(id, 'view');
+            },
+            responseHandler:function(res){
+                //在ajax获取到数据，渲染表格之前，修改数据源
+                return res;
+            },
+    	});
+    }
+	function search_btn() {
+        $('#table').bootstrapTable('refresh')
+    }
+    //带参查询闭包函数
+    function queryParams(params) {
+        var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+            // offset: params.offset,  //页码
+            //每页多少条数据
+            pageSize: params.pageSize,   //页面大小
+            //请求第几页
+            pageNumber:params.pageNumber,
+            // pageSize:this.pageSize,
+            // pageNumber:this.pageNumber,
+            search_text: $("#search_text").val(),
+            datemin : $dp.$('datemin').value,
+            datemax : $dp.$('datemax').value,
+        };
+        return temp;
+    }
+/*
+	参数解释：
+	title	标题
+	url		请求的url
+	id		需要操作的数据id
+	w		弹出层宽度（缺省调默认值）
+	h		弹出层高度（缺省调默认值）
+*/
+/*管理员-增加*/
+function admin_add(title,url,w,h){
+	 layer_show(title,url,w,h);
+}
+/*管理员-批量删除*/
+function datadel(obj,id){
+    layer.confirm('确认要删除吗？',function(index){
+		var idArray = new Array();
+		$(".selected").each(function () {
+			idArray.push($(this).find('.admin_id').html());
+        });
+        $.ajax({
+            type: 'POST',
+            url: "{:url('admin_del_admin')}",
+            data:{"id":idArray},
+            dataType: 'json',
+            success: function(data){
+                if(data == '0'){
+                    layer.msg('删除失败!',{icon:2,time:1000});
+                }else {
+                    layer.msg('已删除!',{icon:1,time:1000});
+                    setTimeout(function(){window.parent.location.reload();parent.layer.close(index);}, 1000);
+                }
+            },
+            error:function(data) {
+                console.log(data.msg);
+            },
+        });
+    });
+}
+/*管理员-删除*/
+function admin_del(obj,id){
+	layer.confirm('确认要删除吗？',function(index){
+		$.ajax({
+			type: 'POST',
+			url: "{:url('admin_del_admin')}",
+            data:{"id":id},
+			dataType: 'json',
+			success: function(data){
+				if(data == '0'){
+                    layer.msg('删除失败!',{icon:2,time:1000});
+				}else {
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!',{icon:1,time:1000});
+                }
+			},
+			error:function(data) {
+				console.log(data.msg);
+			},
+		});		
+	});
+}
+
+/*管理员-编辑*/
+function admin_edit(title,url,id,w,h){
+	layer_show(title,url,w,h);
+}
+/*管理员-启用（停用）*/
+function admin_state(obj,id,state){
+    if(state == 0){
+        layer.confirm('确认要启用吗？',function(index){
+            $.ajax({
+                type:'post',
+                url:"{:url('admin_edit_state')}",
+                data:{"id":id,"state":state},
+                dataType:'json',
+                success:function (data) {
+					if(data){
+                        $(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_state(this,'+id+',1)" href="javascript:;" title="停用" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>');
+                        $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
+                        $(obj).remove();
+                        layer.msg('已启用!', {icon: 6,time:1000});
+					}else {
+                        layer.msg('启用失败!', {icon: 5,time:1000});
+					}
+                },
+                error:function () {
+
+                }
+            });
+        });
+    }else {
+        layer.confirm('确认要停用吗？',function(index){
+            $.ajax({
+                type:'post',
+                url:"{:url('admin_edit_state')}",
+                data:{"id":id,"state":state},
+                dataType:'json',
+                success:function (data){
+					if(data) {
+						$(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_state(this,'+id+',0)" href="javascript:;" title="启用" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>');
+						$(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">已禁用</span>');
+						$(obj).remove();
+						layer.msg('已禁用!', {icon: 5, time: 1000});
+					}else {
+                        layer.msg('禁用失败!', {icon: 5,time:1000});
+               	 	}
+                },
+                error:function () {
+
+                }
+            });
+
+        });
+    }
+}
+</script>
+</body>
+</html>
